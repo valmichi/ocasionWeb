@@ -1,0 +1,32 @@
+<div class="login-container">
+
+  <div class="loginImagen">
+    <div class="overlay">
+      <h1 class="eslogan">Tu evento, nuestra ocasión perfecta</h1>
+    </div>
+  </div>
+
+  <div class="loginForm">
+
+    <img src="logo.jpg" alt="..." class="logoLogin">
+
+    <h2>Iniciar Sesión</h2>
+
+    <form>
+      <div class="campo">
+        <label>Correo</label>
+        <input name="email" type="email" [(ngModel)]="email" placeholder="Ingresa tu correo">
+      </div>
+
+      <div class="campo">
+        <label>Contraseña</label>
+        <input name="password" type="password" [(ngModel)]="password" placeholder="Ingresa tu contraseña">
+      </div>
+
+      <div id="google-btn" class="authContainer"></div>
+
+      <button (click)="login()" class="btn-login">Entrar</button>
+    </form>
+  </div>
+
+</div>

@@ -1,0 +1,90 @@
+.login-container {
+    display: flex;
+    height: 97vh;
+    width: 100%;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+/* IZQUIERDA */
+.loginImagen {
+    flex: 1;
+    background-image: url('/fondoLogin.jpg');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* capa oscura suave sobre la imagen */
+.overlay {
+    background: rgba(0, 0, 0, 0.45);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.eslogan {
+    color: white;
+    font-size: 3rem;
+    text-align: center;
+    padding: 20px;
+    font-weight: 700;
+    max-width: 80%;
+}
+
+/* DERECHA */
+.loginForm {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 60px;
+    margin-top: -70px;
+    background: #ffffff;
+}
+
+.loginForm h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.logoLogin {
+    width: 400px;
+    padding-left: 130px;
+}
+
+.campo {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.campo label {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.campo input {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    font-size: 1.2rem;
+}
+
+.btn-login {
+    margin-top: 10px;
+    background: #c0392b;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.4rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+.btn-login:hover {
+    background: #962f23;
+}
