@@ -1,57 +1,91 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, tap, map } from 'rxjs'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
     private userKey = 'userData';
+    private tokenKey = 'sessionToken'; 
+    private apiUrl = '/api/auth';
     
-
-    // para saber si el usuario está logueado
+    // Sujeto para rastrear el usuario logueado.
     private currentUserSubject = new BehaviorSubject<any>(this.getUser());
     
-    // almacena temporalmente un usuario "logueado"
-    mockUser: any = null;
+    // Observables para el estado
+    public currentUser$ = this.currentUserSubject.asObservable();
+    public isAuthenticated$ = this.currentUser$.pipe(
+        map(user => !!user)
+    );
 
-  constructor() { }
+    constructor(private http: HttpClient) { }
 
-  //Simulacion login (cambiar con backend)
-  loginWithGoogle(mockData:any) {
-    // Cuando haya backend será:
-    // return this.http.post('API_URL/login-google', token);
-    this.saveUser(mockData);
-    this.currentUserSubject.next(mockData);
-  }
+// MÉTODOS DE AUTENTICACIÓN REAL (Google Auth con Backend)
 
-  //Guardar en localstorage
-  saveUser(user: any) {
-    localStorage.setItem(this.userKey, JSON.stringify(user));
-  }
-
-  getUser() {
-    const data = localStorage.getItem(this.userKey);
-    return data ? JSON.parse(data) : null;
-  }
-
-  isAuthenticated(): boolean {
-    return !!this.getUser();
-  }
-
-  logout() {
-    localStorage.removeItem(this.userKey);
-    this.currentUserSubject.next(null);
-  }
-
-  loginMock(email: string, password: string) {
-    if (email === 'admin@gmail.com' && password === '123') {
-      return 'admin';
-    } else if (email === 'user@gmail.com' && password === '123') {
-      return 'user';
-    } else {
-      return null;
+    loginWithGoogle(token: string): Observable<any> {
+        return this.http.post<any>(`${this.apiUrl}/google`, { token: token }).pipe(
+            tap(response => {
+                this.saveUser(response.user); 
+                this.saveToken(response.token);
+                this.currentUserSubject.next(response.user);
+            })
+        );
     }
-  }
 
+// MÉTODOS DE ALMACENAMIENTO
+
+    //Guarda los datos del usuario en localStorage.
+    saveUser(user: any) {
+        localStorage.setItem(this.userKey, JSON.stringify(user));
+    }
+    
+    //Guarda el token de sesión interno generado por el backend.
+    saveToken(token: string) { 
+        localStorage.setItem(this.tokenKey, token);
+    }
+    
+    //Recupera los datos del usuario de localStorage.
+
+    getUser() {
+        const data = localStorage.getItem(this.userKey);
+        return data ? JSON.parse(data) : null;
+    }
+
+    //Recupera el token de sesión de localStorage
+    getToken(): string | null {
+        return localStorage.getItem(this.tokenKey);
+    }
+
+// MÉTODOS DE ESTADO Y CIERRE DE SESIÓN
+
+    isAuthenticated(): boolean {
+        return !!this.getUser();
+    }
+
+    logout() {
+        localStorage.removeItem(this.userKey);
+        localStorage.removeItem(this.tokenKey); 
+        this.currentUserSubject.next(null);
+    }
+
+// MÉTODOS DE MOCK (PARA PRUEBAS SIN GOOGLE)
+    loginMock(email: string, password: string) {
+        let role: string | null = null;
+        let mockData: any = null;
+
+        if (email === 'admin@gmail.com' && password === '123') {
+            role = 'admin';
+            mockData = { name: "Admin Mock", email: email, role: role }; 
+        } else if (email === 'user@gmail.com' && password === '123') {
+            role = 'user';
+            mockData = { name: "User Mock", email: email, role: role };
+        }
+
+        if (mockData) {
+            this.saveUser(mockData);
+            this.currentUserSubject.next(mockData);
+        }
+        return role;
+    }
 }
