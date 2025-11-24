@@ -1,0 +1,144 @@
+.header {
+  background: #7a1805;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+}
+
+.logo {
+  height: 65px;
+}
+
+.btn-logout {
+  background: #ffa012;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  color: rgb(255, 236, 173);
+  font-size: 15px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  cursor: pointer;
+  transition: .3s ease;
+}
+
+.btn-logout:hover {
+  background: #ffea94;
+  color: rgb(82, 68, 0);
+}
+
+.buscador {
+  display: flex;
+  justify-content: center;
+}
+
+.buscador-contenedor {
+    width: 100%;
+
+  /* imagen de fondo */
+  background-image: url('/fondoUsuario.jpg');
+  background-size: cover;
+  background-position: center;
+
+  padding: 40px 20px;
+  text-align: center;
+
+  /* efecto glass suave */
+  background-color: rgba(255,255,255,0.45);
+  backdrop-filter: blur(6px);
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* frase */
+.frase-buscador {
+  font-size: 38px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #000000;
+  text-shadow: 1px 1px 2px #ffffff;
+}
+
+.barra-busq {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.buscador input {
+padding: 10px;
+width: 300px;
+border: 2px solid #ccc;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.buscador select {
+    padding: 10px;
+    border: 2px solid #ccc;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: #555;
+    width: 155px;
+    background-color: rgb(255, 242, 217);
+}
+
+.salones-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 20px;
+padding: 20px 40px;
+}
+
+
+.card {
+background: white;
+border-radius: 12px;
+overflow: hidden;
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+transition: transform 0.2s ease;
+}
+
+
+.card:hover {
+transform: translateY(-5px);
+}
+
+
+.card img {
+width: 100%;
+height: 160px;
+object-fit: cover;
+}
+
+
+.card-info {
+padding: 15px;
+}
+
+
+.card-info h3 {
+margin: 0;
+font-size: 20px;
+}
+
+
+.capacidad {
+color: #555;
+margin: 5px 0;
+}
+
+
+.btn-detalles {
+background: #1b9c07;
+font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+font-size: 17px;
+color: white;
+padding: 10px 12px;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+width: 100%;
+margin-top: 10px;
+}

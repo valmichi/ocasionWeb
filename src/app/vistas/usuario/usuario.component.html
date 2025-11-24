@@ -1,26 +1,46 @@
-<!-- Vista principal de usuario estilo "explorar salones" -->
+<header class="header">
+  <img src="/logo.jpg" class="logo" alt="Logo" />
+  <nav>
+    <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+  </nav>
+</header>
 
-<div class="header">
-  <img src="/public/logo.jpg" alt="...">
-  <h2></h2>
-  
-</div>
+<section class="buscador">
 
-<div class="hero">
-  <div class="hero-content">
-    <h1>Explora salones únicos cerca de ti</h1>
+  <div class="buscador-contenedor">
 
-    <div class="buscador">
-      <input type="text" placeholder="Ubicación" />
-      <input type="date" />
-      <select>
-        <option>1 huésped</option>
-        <option>2 huéspedes</option>
-        <option>3 huéspedes</option>
-        <option>4 huéspedes</option>
+    <h2 class="frase-buscador">Encuentra el salón perfecto para tu evento</h2>
+
+    <div class="barra-busq">
+      <input 
+        type="text"
+        [(ngModel)]="busqueda"
+        (input)="filtrar()"
+        placeholder="Buscar salón..."
+        class="buscador-input"
+      />
+
+      <select [(ngModel)]="filtroCapacidad" (change)="filtrar()" class="selector-capacidad">
+        <option value="">Capacidad</option>
+        <option value="0-200">0 - 200</option>
+        <option value="201-300">201 - 300</option>
+        <option value="301-400">301 - 400</option>
       </select>
-      <button class="btn-buscar">Buscar</button>
+    </div>
+
+  </div>
+</section>
+
+<section class="salones-grid">
+  <div class="card" *ngFor="let salon of salonesFiltrados">
+    <img [src]="salon.img" alt="Imagen salón" />
+    <div class="card-info">
+      <h3>{{ salon.nombre }}</h3>
+      <p>{{ salon.ubicacion }}</p>
+      <p class="capacidad">Capacidad: {{ salon.capacidad }} personas</p>
+      <button class="btn-detalles" (click)="verDetalles(salon)">Detalles</button>
     </div>
   </div>
-</div>
+</section>
+
 
