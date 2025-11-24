@@ -1,0 +1,68 @@
+body, :host {
+  background-image: url('/fondoUsuario.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.contenedor {
+  max-width: 900px;
+  margin: 30px auto;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.titulo {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.galeria {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.galeria img {
+  width: 280px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.info {
+  margin: 20px 0;
+  font-size: 18px;
+}
+
+.lista {
+  list-style: none;
+  padding-left: 0;
+}
+
+.lista li {
+  padding: 8px 0;
+  font-size: 18px;
+}
+
+.btn-reservar {
+  background: #ff7b00;
+  color: white;
+  border: none;
+  padding: 15px 20px;
+  font-size: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: block;
+  margin: 30px auto 0;
+  transition: 0.3s;
+}
+
+.btn-reservar:hover {
+  background: #ffb066;
+}
