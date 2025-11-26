@@ -6,7 +6,7 @@ import { UsuarioComponent } from "./vistas/usuario/usuario.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, LoginComponent, AdminComponent, UsuarioComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
