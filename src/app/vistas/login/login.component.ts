@@ -1,4 +1,4 @@
-import { Component, OnInit, NgModule } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../servicios/auth.service';
 import { FormsModule } from '@angular/forms';
 import { Router} from '@angular/router'
@@ -43,24 +43,39 @@ export class LoginComponent implements OnInit {
   }
 
   handleCredentialResponse(response: any) {
-    // Este token lo enviarás a backend después
-    console.log("TOKEN DE GOOGLE:", response.credential);
-
-    this.authService.loginWithGoogle({
-      name: "Usuario Google",
-      email: "prueba@gmail.com",
-      role: "user",
-      token: response.credential
+    const googleToken = response.credential;
+    
+    // Llamar al AuthService con el token de Google
+    this.authService.loginWithGoogle(googleToken).subscribe({
+      next: (res) => {
+        // Éxito: El backend verificó el token y devolvió el usuario y el JWT.
+        console.log("Login de Google exitoso. Usuario:", res.user);
+        
+        // Redirección basada en el rol devuelto por el backend
+        if (res.user && res.user.role === 'admin') {
+          this.router.navigate(['/admin']);
+        } else if (res.user) {
+          this.router.navigate(['/usuario']); //Rol por defecto
+        }
+      },
+      error: (err) => {
+        // Error: Falló la conexión (CORS/IP), la verificación del token de Google, o el backend respondió 401/500.
+        console.error("⛔ Error de Autenticación con Google:", err);
+        
+        // Mostrar un mensaje de error al usuario
+        let errorMessage = 'Fallo en el inicio de sesión. Revisa la consola para más detalles.';
+        if (err.error && err.error.error) {
+           errorMessage = `Error: ${err.error.error}`;
+        }
+        alert(errorMessage);
+      }
     });
-
-    // Redirecciones cuando agregues routing
   }
 
   //mock para entrar a cada interfaz sin backend
   login() {
   const email = this.email;
   const password = this.password;
-
   const role = this.authService.loginMock(email, password);
 
   if (role === 'admin') {

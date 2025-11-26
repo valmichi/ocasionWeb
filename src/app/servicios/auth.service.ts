@@ -1,5 +1,6 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,22 +8,37 @@ import { BehaviorSubject } from 'rxjs';
 export class AuthService {
 
     private userKey = 'userData';
+    private tokenKey = 'appToken'; // Clave para guardar el token de la aplicación (JWT)
+    private apiUrl = 'http://192.168.193.127:3000/api/auth/google';
     
-
-    // para saber si el usuario está logueado
+    // Para saber si el usuario está logueado
     private currentUserSubject = new BehaviorSubject<any>(this.getUser());
     
-    // almacena temporalmente un usuario "logueado"
-    mockUser: any = null;
+    constructor(private http: HttpClient) { }
 
-  constructor() { }
 
-  //Simulacion login (cambiar con backend)
-  loginWithGoogle(mockData:any) {
-    // Cuando haya backend será:
-    // return this.http.post('API_URL/login-google', token);
-    this.saveUser(mockData);
-    this.currentUserSubject.next(mockData);
+  loginWithGoogle(googleToken: string): Observable<any> {
+    // El backend espera un objeto { token: 'el_token_de_google' }
+      return this.http.post(this.apiUrl, { token: googleToken }).pipe(
+        tap((response: any) => {
+          // El backend devuelve { user: {...}, token: 'TU_JWT' }
+          // Guardamos los datos del usuario devueltos por el backend
+          this.saveUser(response.user);
+          // Guardamos el token de sesión de la aplicación (JWT)
+          this.saveAppToken(response.token);
+          
+          this.currentUserSubject.next(response.user);
+        })
+      );
+  }
+
+  // Guardar el token de la aplicación (para futuras peticiones protegidas)
+  saveAppToken(token: string) {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
   }
 
   //Guardar en localstorage
@@ -36,12 +52,13 @@ export class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.getUser();
+    return !!this.getUser() && !!this.getToken();
   }
 
   logout() {
     localStorage.removeItem(this.userKey);
-    this.currentUserSubject.next(null);
+      localStorage.removeItem(this.tokenKey); // Eliminar el token de la app
+      this.currentUserSubject.next(null);
   }
 
   loginMock(email: string, password: string) {
@@ -53,5 +70,4 @@ export class AuthService {
       return null;
     }
   }
-
 }
