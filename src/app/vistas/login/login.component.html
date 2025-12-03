@@ -10,23 +10,66 @@
 
     <img src="logo.jpg" alt="..." class="logoLogin">
 
-    <h2>Iniciar Sesión</h2>
+<div class="contenedor-login">
 
-    <form>
-      <div class="campo">
-        <label>Correo</label>
-        <input name="email" type="email" [(ngModel)]="email" placeholder="Ingresa tu correo">
-      </div>
+  <!-- 🔵 Selector de pestañas -->
+  <div class="tabs">
+    <button 
+      [class.activo]="modo === 'login'" 
+      (click)="modo = 'login'">
+      Iniciar sesión
+    </button>
 
-      <div class="campo">
-        <label>Contraseña</label>
-        <input name="password" type="password" [(ngModel)]="password" placeholder="Ingresa tu contraseña">
-      </div>
+    <button 
+      [class.activo]="modo === 'registro'" 
+      (click)="modo = 'registro'">
+      Crear cuenta
+    </button>
+  </div>
 
-      <div id="google-btn" class="authContainer"></div>
+  <!-- 🔐 FORMULARIO INICIAR SESIÓN -->
+  <form *ngIf="modo === 'login'" (ngSubmit)="iniciarSesion()">
+  <label>Email</label>
+  <input type="email" [(ngModel)]="login.email" name="email" required />
 
-      <button (click)="login()" class="btn-login">Entrar</button>
-    </form>
+  <label>Contraseña</label>
+  <input type="password" [(ngModel)]="login.password" name="password" required />
+     
+  <!-- BOTÓN DE GOOGLE -->
+  <div id="google-btn" class="authContainer"></div>
+
+  <button type="submit" class="btn-principal">Entrar</button>
+
+</form>
+
+
+  <!-- 📝 FORMULARIO REGISTRO -->
+  <form *ngIf="modo === 'registro'" (ngSubmit)="registrar()">
+    <label>Nombre</label>
+    <input type="text" [(ngModel)]="registro.nombre" name="nombre" required />
+
+    <label>Apellido paterno</label>
+    <input type="text" [(ngModel)]="registro.apPaterno" name="apPaterno" required />
+
+    <label>Apellido materno</label>
+    <input type="text" [(ngModel)]="registro.apMaterno" name="apMaterno" />
+
+    <label>Email</label>
+    <input type="email" [(ngModel)]="registro.email" name="emailR" required />
+
+    <label>Teléfono</label>
+    <input type="tel" [(ngModel)]="registro.telefono" name="telefono" required />
+
+    <label>Contraseña</label>
+    <input type="password" [(ngModel)]="registro.password" name="passwordR" required />
+
+    <label>Fecha de creación</label>
+    <input type="date" [(ngModel)]="registro.fecha" name="fecha" required />
+
+    <button type="submit" class="btn-principal">Crear cuenta</button>
+  </form>
+
+</div>
   </div>
 
 </div>

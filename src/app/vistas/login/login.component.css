@@ -12,6 +12,7 @@
     background-size: cover;
     background-position: center;
     position: relative;
+    height: 880px;
 }
 
 /* capa oscura suave sobre la imagen */
@@ -44,47 +45,73 @@
     background: #ffffff;
 }
 
-.loginForm h2 {
-    font-size: 1.8rem;
-    margin-bottom: 20px;
-}
-
 .logoLogin {
     width: 400px;
     padding-left: 130px;
+    margin-top: 200px;
 }
 
-.campo {
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
+.contenedor-login {
+  width: 350px;
+  margin: auto;
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
 }
 
-.campo label {
-    font-size: 1.2rem;
-    margin-bottom: 5px;
-    font-weight: bold;
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  background: #a4d7f5;
+  border-radius: 30px;
+  overflow: hidden;
 }
 
-.campo input {
-    padding: 12px;
-    border-radius: 6px;
-    border: 1px solid #aaa;
-    font-size: 1.2rem;
+.tabs button {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.btn-login {
-    margin-top: 10px;
-    background: #c0392b;
-    color: white;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    font-size: 1.4rem;
-    cursor: pointer;
-    width: 100%;
+.tabs button.activo {
+  background: #165a9e;
+  color: white;
 }
 
-.btn-login:hover {
-    background: #962f23;
+form h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 3px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.btn-principal {
+  width: 100%;
+  margin-top: 20px;
+  padding: 10px;
+  background: #165a9e;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-principal:hover {
+  background: #0d4478;
 }

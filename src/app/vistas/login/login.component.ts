@@ -1,89 +1,145 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../servicios/auth.service';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router} from '@angular/router'
-declare const google: any;
+import { Router } from '@angular/router';
+import { AuthService } from '../../servicios/auth.service';
+
+declare const google: any; // evita errores TS por la librería global
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit {
 
-  email:string = "";
-  password:string = "";
+  modo: 'login' | 'registro' = 'login';
 
-  constructor(private authService: AuthService, private router: Router) {
-  }
+  login = {
+    email: '',
+    password: ''
+  };
+
+  registro = {
+    nombre: '',
+    apPaterno: '',
+    apMaterno: '',
+    email: '',
+    telefono: '',
+    password: '',
+    fecha: ''
+  };
+
+  // reemplaza por tu CLIENT_ID real
+  private GOOGLE_CLIENT_ID = '101437584768-lcblob3rb82p9vj9v63p6j5m1fh7vh24.apps.googleusercontent.com';
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.renderGoogleButton();
-  }
-
-  renderGoogleButton() {
-    google.accounts.id.initialize({
-      client_id: "101437584768-lcblob3rb82p9vj9v63p6j5m1fh7vh24.apps.googleusercontent.com",
-      callback: (response: any) => this.handleCredentialResponse(response)
-    });
-
-    const btn = document.getElementById("google-btn");
-
-    if (btn) {
-      google.accounts.id.renderButton(btn, {
-        theme: "filled_blue",
-        size: "large",
-        width: "260"
-      });
-    }
-
-    google.accounts.id.prompt(); 
-  }
-
-  handleCredentialResponse(response: any) {
-    const googleToken = response.credential;
-    
-    // Llamar al AuthService con el token de Google
-    this.authService.loginWithGoogle(googleToken).subscribe({
-      next: (res) => {
-        // Éxito: El backend verificó el token y devolvió el usuario y el JWT.
-        console.log("Login de Google exitoso. Usuario:", res.user);
-        
-        // Redirección basada en el rol devuelto por el backend
-        if (res.user && res.user.role === 'admin') {
-          this.router.navigate(['/admin']);
-        } else if (res.user) {
-          this.router.navigate(['/usuario']); //Rol por defecto
+    // Inicializa el botón de Google (si la librería ya cargó)
+    // A veces la librería se carga después; si la variable google no existe aún, reintenta con setTimeout corto
+    const init = () => {
+      try {
+        if (typeof google === 'undefined' || !google?.accounts?.id) {
+          // si no está lista, reintenta en 200ms (máx 5 intentos)
+          setTimeout(init, 200);
+          return;
         }
-      },
-      error: (err) => {
-        // Error: Falló la conexión (CORS/IP), la verificación del token de Google, o el backend respondió 401/500.
-        console.error("⛔ Error de Autenticación con Google:", err);
-        
-        // Mostrar un mensaje de error al usuario
-        let errorMessage = 'Fallo en el inicio de sesión. Revisa la consola para más detalles.';
-        if (err.error && err.error.error) {
-           errorMessage = `Error: ${err.error.error}`;
+
+        google.accounts.id.initialize({
+          client_id: this.GOOGLE_CLIENT_ID,
+          callback: (response: any) => this.handleCredentialResponse(response)
+        });
+
+        // Renderiza el botón en el div con id "google-btn"
+        const btnContainer = document.getElementById('google-btn');
+        if (btnContainer) {
+          google.accounts.id.renderButton(
+            btnContainer,
+            { theme: 'filled_blue', size: 'large', width: '260' } // opciones visuales
+          );
         }
-        alert(errorMessage);
+
+        // (Opcional) muestra One Tap
+        // google.accounts.id.prompt();
+      } catch (err) {
+        console.warn('Google Sign-In no listo aún, reintentando...', err);
+        setTimeout(init, 300);
       }
-    });
+    };
+
+     //  Fecha del día actual (formato YYYY-MM-DD)
+    this.registro.fecha = this.getFechaLocal();
+
+    init();
   }
 
-  //mock para entrar a cada interfaz sin backend
-  login() {
-  const email = this.email;
-  const password = this.password;
-  const role = this.authService.loginMock(email, password);
+  // Maneja la respuesta (JWT) que entrega Google
+  handleCredentialResponse(response: any) {
+    // response.credential es un ID token JWT (base64)
+    console.log('Google token:', response.credential);
 
-  if (role === 'admin') {
+    // Por ahora hacemos login mock con los datos del token:
+    // En producción deberías enviar response.credential al backend para validarlo y crear/obtener usuario.
+    const mockUser = {
+    name: 'Usuario Google',
+    email: 'googleuser@example.com',
+    role: 'user',  // puedes cambiar a 'admin' si quieres
+    token: response.credential
+  };
+
+    this.authService.loginWithGoogle(mockUser.token);
+
+     //  Guardamos el usuario manualmente para simular el backend
+  this.authService.saveUser(mockUser);
+
+  //  Redirección por rol
+  if (mockUser.role === 'admin') {
     this.router.navigate(['/admin']);
-  } else if (role === 'user') {
-    this.router.navigate(['/usuario']);
   } else {
-    alert('Credenciales incorrectas');
+    this.router.navigate(['/usuario']);
+  
   }
 }
+
+  iniciarSesion() {
+  const user = this.authService.loginMock(this.login.email, this.login.password);
+
+  if (!user) {
+    console.warn('Credenciales inválidas');
+    return;
+  }
+
+  if (user.role === 'admin') {
+    this.router.navigate(['/admin']);
+  } else {
+    this.router.navigate(['/usuario']);
+  }
+}
+
+
+  registrar() {
+  const user = this.authService.registroMock(this.registro);
+
+  if (user.role === 'admin') {
+    this.router.navigate(['/admin']);
+  } else {
+    this.router.navigate(['/usuario']);
+  }
+}
+
+  getFechaLocal(): string {
+  const hoy = new Date();
+  const year = hoy.getFullYear();
+  const month = String(hoy.getMonth() + 1).padStart(2, '0');
+  const day = String(hoy.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+
 }

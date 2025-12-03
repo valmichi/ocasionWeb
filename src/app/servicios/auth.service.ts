@@ -62,12 +62,41 @@ export class AuthService {
   }
 
   loginMock(email: string, password: string) {
-    if (email === 'admin@gmail.com' && password === '123') {
-      return 'admin';
-    } else if (email === 'user@gmail.com' && password === '123') {
-      return 'user';
-    } else {
-      return null;
+    if (!email || !password) return null;
+
+    let role = 'user';
+    if (email === 'admin@gmail.com') {
+      role = 'admin';
     }
+
+    const user = {
+      email,
+      role,
+      token: 'mock-token'
+    };
+
+    this.saveUser(user);
+    this.saveAppToken('mock-token');
+
+    return user;
+  }
+
+  registroMock(formData: any) {
+    let role = 'user';
+    if (formData.email === 'admin@gmail.com') {
+      role = 'admin';
+    }
+
+    const user = {
+      email: formData.email,
+      nombre: formData.nombre,
+      role,
+      token: 'mock-registro-token'
+    };
+
+    this.saveUser(user);
+    this.saveAppToken('mock-registro-token');
+
+    return user;
   }
 }
