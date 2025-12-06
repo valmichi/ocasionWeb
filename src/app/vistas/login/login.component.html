@@ -12,7 +12,7 @@
 
 <div class="contenedor-login">
 
-  <!-- 🔵 Selector de pestañas -->
+  <!-- Selector de pestañas -->
   <div class="tabs">
     <button 
       [class.activo]="modo === 'login'" 
@@ -27,7 +27,7 @@
     </button>
   </div>
 
-  <!-- 🔐 FORMULARIO INICIAR SESIÓN -->
+  <!-- FORMULARIO INICIAR SESIÓN -->
   <form *ngIf="modo === 'login'" (ngSubmit)="iniciarSesion()">
   <label>Email</label>
   <input type="email" [(ngModel)]="login.email" name="email" required />
@@ -43,7 +43,7 @@
 </form>
 
 
-  <!-- 📝 FORMULARIO REGISTRO -->
+  <!-- FORMULARIO REGISTRO -->
   <form *ngIf="modo === 'registro'" (ngSubmit)="registrar()">
     <label>Nombre</label>
     <input type="text" [(ngModel)]="registro.nombre" name="nombre" required />
@@ -63,8 +63,16 @@
     <label>Contraseña</label>
     <input type="password" [(ngModel)]="registro.password" name="passwordR" required />
 
-    <label>Fecha de creación</label>
-    <input type="date" [(ngModel)]="registro.fecha" name="fecha" required />
+    <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px;">
+    <input type="checkbox"
+           [ngModel]="registro.rol === 'propietario'"
+           (ngModelChange)="registro.rol = $event ? 'propietario' : 'cliente'"
+           name="rolPropietario" />
+
+      <label>Rol propietario</label>
+  </div>
+
+
 
     <button type="submit" class="btn-principal">Crear cuenta</button>
   </form>
