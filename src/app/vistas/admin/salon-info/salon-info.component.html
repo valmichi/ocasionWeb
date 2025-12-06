@@ -1,0 +1,88 @@
+<div class="modal">
+
+  <div class="form-container">
+
+    <h2>{{ salon ? 'Editar Salón' : 'Nuevo Salón' }}</h2>
+
+    <form [formGroup]="formSalon" (ngSubmit)="guardar()">
+
+      <!-- Datos del salón -->
+      <label>Nombre</label>
+      <input formControlName="nombre">
+
+      <label>Capacidad</label>
+      <input type="number" formControlName="capacidad">
+
+      <label>Descripción</label>
+      <textarea formControlName="descripcion"></textarea>
+
+      <label>Precio por hora</label>
+      <input type="number" formControlName="precioHora">
+    <!--  Input para imagenes -->
+      <label>Imágenes del salón</label>
+
+        <input type="file" multiple accept="image/*" (change)="onImagenesSeleccionadas($event)">
+
+        <div class="preview-container">
+        <img *ngFor="let img of imagenesPreview" [src]="img" class="preview-img">
+        </div>
+
+      <!-- Servicios -->
+      <label>Servicios del salón</label>
+      <div class="servicios">
+        <label *ngFor="let s of listaServicios">
+          <input type="checkbox"
+                 [value]="s"
+                 (change)="toggleServicio($event)">
+          {{ s }}
+        </label>
+      </div>
+
+      <!-- Ubicación -->
+      <h3>Ubicación del salón</h3>
+
+      <label>Dirección</label>
+
+      <label>Calle</label>
+      <input formControlName="calle">
+
+      <label>Número</label>
+      <input formControlName="numero">
+
+      <label>Colonia</label>
+      <input formControlName="colonia">
+
+      <label>Ciudad</label>
+      <input formControlName="ciudad">
+
+      <label>Estado</label>
+      <input formControlName="estado">
+
+      <label>País</label>
+      <input formControlName="pais">
+
+      <label>Código Postal</label>
+      <input formControlName="cp">
+
+      <!-- Disponibilidad -->
+      <h3>Disponibilidad</h3>
+
+      <label>Hora inicio</label>
+      <input type="time" formControlName="horaInicio">
+
+      <label>Hora fin</label>
+      <input type="time" formControlName="horaFin">
+
+      <full-calendar [options]="calendarOptions"></full-calendar>
+
+      <button class="btn-principal" type="submit">
+        Guardar
+      </button>
+
+      <button class="btn-secundario" (click)="cerrar.emit()">
+        Cancelar
+      </button>
+    </form>
+  </div>
+
+</div>
