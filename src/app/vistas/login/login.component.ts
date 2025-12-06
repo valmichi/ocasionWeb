@@ -41,43 +41,46 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Inicializa el botón de Google (si la librería ya cargó)
-    // A veces la librería se carga después; si la variable google no existe aún, reintenta con setTimeout corto
-    const init = () => {
-      try {
-        if (typeof google === 'undefined' || !google?.accounts?.id) {
-          // si no está lista, reintenta en 200ms (máx 5 intentos)
-          setTimeout(init, 200);
-          return;
-        }
+  this.initializeGoogleButton();
+  this.setFechaHoy();
+}
 
-        google.accounts.id.initialize({
-          client_id: this.GOOGLE_CLIENT_ID,
-          callback: (response: any) => this.handleCredentialResponse(response)
-        });
+initializeGoogleButton(retry = 0) {
+  const MAX_RETRIES = 10;
 
-        // Renderiza el botón en el div con id "google-btn"
-        const btnContainer = document.getElementById('google-btn');
-        if (btnContainer) {
-          google.accounts.id.renderButton(
-            btnContainer,
-            { theme: 'filled_blue', size: 'large', width: '260' } // opciones visuales
-          );
-        }
-
-        // (Opcional) muestra One Tap
-        // google.accounts.id.prompt();
-      } catch (err) {
-        console.warn('Google Sign-In no listo aún, reintentando...', err);
-        setTimeout(init, 300);
-      }
-    };
-
-     //  Fecha del día actual (formato YYYY-MM-DD)
-    this.registro.fecha = this.getFechaLocal();
-
-    init();
+  // Verifica si el script ya está cargado
+  if (typeof google === 'undefined' || !google?.accounts?.id) {
+    if (retry < MAX_RETRIES) {
+      setTimeout(() => this.initializeGoogleButton(retry + 1), 300);
+    }
+    return;
   }
+
+  // Verifica que el div exista en el DOM
+  const btnContainer = document.getElementById('google-btn');
+
+  if (!btnContainer) {
+    if (retry < MAX_RETRIES) {
+      setTimeout(() => this.initializeGoogleButton(retry + 1), 300);
+    }
+    return;
+  }
+
+  // Limpia contenido anterior para evitar que falle al re-renderizar
+  btnContainer.innerHTML = '';
+
+  google.accounts.id.initialize({
+    client_id: this.GOOGLE_CLIENT_ID,
+    callback: (response: any) => this.handleCredentialResponse(response)
+  });
+
+  google.accounts.id.renderButton(btnContainer, {
+    theme: 'filled_blue',
+    size: 'large',
+    width: 260
+  });
+}
+
 
   // Maneja la respuesta (JWT) que entrega Google
   handleCredentialResponse(response: any) {
@@ -141,5 +144,11 @@ export class LoginComponent implements OnInit {
   return `${year}-${month}-${day}`;
 }
 
+setFechaHoy() {
+  const hoy = new Date();
+  // Fecha local sin convertir a UTC
+  hoy.setMinutes(hoy.getMinutes() - hoy.getTimezoneOffset());
+  this.registro.fecha = hoy.toISOString().slice(0, 10);
+}
 
 }
