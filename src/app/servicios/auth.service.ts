@@ -10,6 +10,7 @@ export class AuthService {
     private userKey = 'userData';
     private tokenKey = 'appToken'; // Clave para guardar el token de la aplicación (JWT)
     private apiUrl = 'http://192.168.193.127:3000/api/auth/google';
+    private registroApiUrl = 'http://192.168.193.127:3000/api/registrar';
     
     // Para saber si el usuario está logueado
     private currentUserSubject = new BehaviorSubject<any>(this.getUser());
@@ -81,22 +82,12 @@ export class AuthService {
     return user;
   }
 
-  registroMock(formData: any) {
-    let role = 'user';
-    if (formData.email === 'admin@gmail.com') {
-      role = 'admin';
+  registro(formData: any): Observable<any> {
+        // formData contiene: nombre, email, password, rol, etc.
+        return this.http.post(this.registroApiUrl, formData).pipe(
+            tap((response: any) => {
+                console.log(`Usuario registrado en el backend. ID: ${response.id_registro}`);
+            })
+        );
     }
-
-    const user = {
-      email: formData.email,
-      nombre: formData.nombre,
-      role,
-      token: 'mock-registro-token'
-    };
-
-    this.saveUser(user);
-    this.saveAppToken('mock-registro-token');
-
-    return user;
-  }
 }
