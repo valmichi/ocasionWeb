@@ -135,14 +135,22 @@ export class LoginComponent implements OnInit {
 
 
   registrar() {
-    const user = this.authService.registroMock(this.registro);
-
-    if (user.role === 'admin') {
-      this.router.navigate(['/admin']);
-    } else {
-      this.router.navigate(['/usuario']);
-    }
-  }
+    // 1. Llamar al servicio REAL de registro
+    this.authService.registro(this.registro).subscribe({
+        next: (response) => {
+            alert(`¡Registro exitoso! Tu cuenta de ${response.rol} ha sido creada.`);
+            
+            // 2. Después de registrar, redirigir a la pestaña de Iniciar Sesión
+            this.modo = 'login';
+        },
+        error: (err) => {
+            console.error('Error al registrar en el backend:', err);
+            // Mostrar el error del backend si existe
+            const errorMessage = err.error?.error || 'Fallo en el registro. Inténtalo de nuevo.';
+            alert(errorMessage);
+        }
+    });
+}
 
   getFechaLocal(): string {
     const hoy = new Date();
