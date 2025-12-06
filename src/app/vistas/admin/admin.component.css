@@ -1,0 +1,59 @@
+.admin-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.admin-container h1 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.btn-principal {
+  background: #0066ff;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 6px;
+  border: none;
+  margin-bottom: 25px;
+}
+
+.btn-principal:hover {
+  background: #0052cc;
+}
+
+.salon-card {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+}
+
+.salon-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 5px;
+}
+
+.salon-card p {
+  margin: 3px 0;
+}
+
+.btn-secundario {
+  background: #6c757d;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  margin-top: 10px;
+  border: none;
+}
+
+.btn-secundario:hover {
+  background: #5a6268;
+}

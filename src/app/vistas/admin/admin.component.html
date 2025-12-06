@@ -1,1 +1,30 @@
-<p>admin works!</p>
+<div class="admin-container">
+
+  <h1>Mis Salones</h1>
+
+  <button class="btn-principal" (click)="nuevoSalon()">
+    Cargar / Subir Salón
+  </button>
+
+  <!-- Lista de salones -->
+  <div *ngFor="let salon of salones" class="salon-card">
+
+    <h3>{{ salon.nombre }}</h3>
+    <p><strong>Capacidad:</strong> {{ salon.capacidad }}</p>
+    <p><strong>Precio por hora:</strong> ${{ salon.precioHora }}</p>
+    <p><strong>Ciudad:</strong> {{ salon.ubicacion.ciudad }}</p>
+
+    <button class="btn-secundario" (click)="editarSalon(salon)">
+      Editar
+    </button>
+  </div>
+
+  <!-- Modal del formulario -->
+  <app-salon-info 
+      *ngIf="mostrarForm"
+      [salon]="salonSeleccionado"
+      (cerrar)="cerrarFormulario()"
+      (guardado)="recargarSalones()">
+  </app-salon-info>
+
+</div>
