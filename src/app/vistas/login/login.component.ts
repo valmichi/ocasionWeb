@@ -89,7 +89,7 @@ export class LoginComponent implements OnInit {
 
 
   // =======================================================
-  // FUNCIÓN CORREGIDA: ENVÍA EL TOKEN AL BACKEND Y SE SUSCRIBE
+  // FUNCIÓN: ENVÍA EL TOKEN AL BACKEND Y SE SUSCRIBE
   // =======================================================
   handleCredentialResponse(response: any) {
     // response.credential es el ID token JWT REAL que debemos enviar al backend
@@ -98,18 +98,18 @@ export class LoginComponent implements OnInit {
     // Llamamos al servicio y nos SUSCRIBIMOS para ejecutar la petición HTTP
     this.authService.loginWithGoogle(response.credential).subscribe({
         next: (backendResponse) => {
-            // Si la petición es exitosa, el backend ya guardó el usuario en NFS
             console.log('Autenticación Google exitosa vía Node.js:', backendResponse.user.email);
             
-            // Redirección por rol devuelto por el backend
-            if (backendResponse.user.role === 'propietario') {
-                this.router.navigate(['/propietario']); // Asumiendo que el rol 'propietario' va a '/propietario'
+            const user = backendResponse.user;
+            const rol = (user.rol || '').toLowerCase(); 
+            
+            if (rol === 'propietario' || rol === 'admin') {
+                this.router.navigate(['/admin']); 
             } else {
                 this.router.navigate(['/usuario']);
             }
         },
         error: (err) => {
-            // Este error puede venir del backend (401 - token inválido) o de la red.
             console.error('Error al intentar autenticar con el backend:', err);
             alert('Fallo la autenticación. Revisa que el token de Google sea válido y que el backend esté corriendo en el puerto correcto.');
         }
@@ -119,18 +119,27 @@ export class LoginComponent implements OnInit {
 
 
   iniciarSesion() {
-    const user = this.authService.loginMock(this.login.email, this.login.password);
-
-    if (!user) {
-      console.warn('Credenciales inválidas');
-      return;
-    }
-
-    if (user.role === 'admin') {
-      this.router.navigate(['/admin']);
-    } else {
-      this.router.navigate(['/usuario']);
-    }
+    this.authService.loginManual(this.login.email, this.login.password).subscribe({
+        next: (backendResponse) => {
+            console.log('Login manual exitoso:', backendResponse.user.email);
+            
+            // Redirección por rol devuelto por el backend
+            // El backend devuelve { rol: 'cliente'/'propietario' } en el objeto user
+            const user = backendResponse.user;
+            const rol = (user.rol || '').toLowerCase(); 
+            
+            if (rol === 'propietario' || rol === 'admin') {
+                this.router.navigate(['/admin']); 
+            } else {
+                this.router.navigate(['/usuario']);
+            }
+        },
+        error: (err) => {
+            console.error('Error al intentar autenticar con el backend (Manual):', err);
+            const errorMessage = err.error?.error || 'Credenciales inválidas o Error de servidor.';
+            alert(errorMessage);
+        }
+    });
   }
 
 
