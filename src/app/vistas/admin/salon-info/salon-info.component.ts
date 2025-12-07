@@ -136,28 +136,48 @@ export class SalonInfoComponent {
 
 
   guardar() {
-    const data = this.formSalon.value;
+    const data = this.formSalon.value;
 
-    this.propietarioService.guardarSalon({
-      ...data,
-      imagenes: this.imagenes,
-      ubicacion: {
-        direccion: data.direccion,
-        ciudad: data.ciudad,
-        cp: data.cp,
-        lat: data.lat,
-        lng: data.lng
-      },
-      disponibilidad: {
-        fechasNoDisponibles: this.fechasNoDisponibles,
-        horaInicio: data.horaInicio,
-        horaFin: data.horaFin
-      }
-    });
+    // 1. Construir el objeto complejo para el backend
+    const salonPayload = {
+      // id: data.id, // Si es edición, envías el ID. Si es nuevo, el backend lo asigna.
+      nombre: data.nombre,
+      capacidad: data.capacidad,
+      descripcion: data.descripcion,
+      precioHora: data.precioHora,
+      servicios: this.selectedServicios, // Usar la lista seleccionada
+      
+      // Estructuras anidadas
+      ubicacion: {
+        direccion: data.direccion, // Tienes calle/numero/colonia en el HTML, pero no en el formControlName. Se ajusta abajo.
+        ciudad: data.ciudad,
+        cp: data.cp,
+        lat: data.lat,
+        lng: data.lng
+      },
+      disponibilidad: {
+        fechasNoDisponibles: this.fechasNoDisponibles,
+        horaInicio: data.horaInicio,
+        horaFin: data.horaFin
+      },
+      // Nota: Las imágenes deben manejarse como Base64 si no usas FormData, pero aquí solo enviamos los datos.
+      imagenes: this.formSalon.value.imagenes || []
+    };
 
-    this.guardado.emit();
-    this.cerrar.emit();
-  }
+    // 2. Llamar al servicio y suscribirse
+    this.propietarioService.guardarSalon(salonPayload).subscribe({
+      next: (response) => {
+        console.log('Salón guardado con ID:', response.id_salon);
+        alert(`Salón "${response.salon.nombre}" publicado correctamente con ID ${response.id_salon}.`);
+        this.guardado.emit(); // Para que AdminComponent recargue la lista
+        this.cerrar.emit();
+      },
+      error: (err) => {
+        console.error('Error al guardar el salón:', err);
+        alert(`Error al guardar: ${err.error?.error || 'Error de red/servidor'}`);
+      }
+    });
+  }
 
   onImagenesSeleccionadas(event: any) {
   const files: FileList = event.target.files;
@@ -194,6 +214,5 @@ generarDireccionCompleta() {
 
   return `${f.calle} ${f.numero}, ${f.colonia}, ${f.ciudad}, ${f.estado}, ${f.pais}, ${f.cp}`;
 }
-
 
 }
