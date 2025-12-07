@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SalonInfoComponent } from "./salon-info/salon-info.component";
 import { PropietarioService } from '../../servicios/propietario.service';
 import { CommonModule } from '@angular/common';
@@ -10,7 +10,8 @@ import { CommonModule } from '@angular/common';
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
 })
-export class AdminComponent {
+
+export class AdminComponent implements OnInit {
   salones: any[] = [];
   mostrarForm = false;
   salonSeleccionado: any = null;
@@ -22,7 +23,16 @@ export class AdminComponent {
   }
 
   recargarSalones() {
-    this.salones = this.propietarioService.getSalones(); // simulación de backend
+    this.propietarioService.getSalones().subscribe({
+        next: (salonesLista) => {
+            console.log(`[FRONTEND] Salones cargados: ${salonesLista.length}`);
+            this.salones = salonesLista;
+        },
+        error: (err) => {
+            console.error('Error al cargar salones:', err);
+            this.salones = []; // Limpiar lista en caso de error
+        }
+    });
   }
 
   nuevoSalon() {

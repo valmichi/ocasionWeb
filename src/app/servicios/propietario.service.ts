@@ -2,6 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,5 +18,11 @@ export class PropietarioService {
     return this.http.post(`${this.apiUrl}/salon`, salonData);
   }
 
-  getSalones(): any[] { return []; /* Aquí va la llamada GET /api/leer/salon/all */ }
+  getSalones(): Observable<any[]> {
+    console.log('[FRONTEND] Solicitando lista de salones al backend...');
+    return this.http.get<any>(`${this.apiUrl}/leer/salon/all`).pipe(
+        // El backend devuelve { data: [...] }
+        map(response => response.data || [])
+    );
+  }
 }

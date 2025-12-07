@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { PropietarioService } from '../../../servicios/propietario.service';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
-
+import { AuthService } from '../../../servicios/auth.service';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { FullCalendarModule } from '@fullcalendar/angular';
@@ -34,6 +34,8 @@ export class SalonInfoComponent {
   marker: any;
   mapaPreview: any = null;
 
+  private idPropietarioLogueado: string | null = null;
+
   calendarOptions: CalendarOptions = {
   initialView: 'dayGridMonth',
   selectable: true,
@@ -60,11 +62,17 @@ export class SalonInfoComponent {
 
   constructor(
     private fb: FormBuilder,
-    private propietarioService: PropietarioService
-    , private sanitizer: DomSanitizer
+    private propietarioService: PropietarioService, 
+    private sanitizer: DomSanitizer,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    // Obtener el ID del propietario logueado al iniciar el componente
+    const currentUser = this.authService.getUser();
+    // Asumiendo que el ID incremental del sistema está en 'id'
+    this.idPropietarioLogueado = currentUser?.id?.toString() || null;
+
     this.formSalon = this.fb.group({
       id: [this.salon?.id],
       nombre: [this.salon?.nombre || ""],
@@ -74,7 +82,12 @@ export class SalonInfoComponent {
 
       servicios: [this.salon?.servicios || []],
 
-      direccion: [this.salon?.ubicacion?.direccion || ""],
+      calle: [this.salon?.ubicacion?.calle || ""],
+      numero: [this.salon?.ubicacion?.numero || ""],
+      colonia: [this.salon?.ubicacion?.colonia || ""],
+      estado: [this.salon?.ubicacion?.estado || ""],
+      pais: [this.salon?.ubicacion?.pais || ""],
+
       ciudad: [this.salon?.ubicacion?.ciudad || ""],
       cp: [this.salon?.ubicacion?.cp || ""],
       lat: [this.salon?.ubicacion?.lat || null],
@@ -103,7 +116,17 @@ export class SalonInfoComponent {
     this.formSalon.patchValue({ servicios: this.selectedServicios });
   }
 
- initMap() {
+ initMap(retry = 0) {
+  const MAX_RETRIES = 10;
+  if (typeof google === 'undefined' || !google.maps || !google.maps.Map) {
+    if (retry < MAX_RETRIES) {
+            // console.log(`Esperando carga de Google Maps... Intento ${retry + 1}`);
+            setTimeout(() => this.initMap(retry + 1), 300); // Reintentar
+        } else {
+            console.error("No se pudo cargar Google Maps API. Verifica el script tag en index.html.");
+        }
+        return;
+   }
   const lat = this.formSalon.value.lat || 19.4326;
   const lng = this.formSalon.value.lng || -99.1332;
 
@@ -136,11 +159,20 @@ export class SalonInfoComponent {
 
 
   guardar() {
-    const data = this.formSalon.value;
+    const data = this.formSalon.value;
+
+    if (!this.idPropietarioLogueado) {
+        alert("Error de autenticación: El propietario no está logueado o no se pudo obtener su ID.");
+        return;
+    }
+    if (!data.nombre || !data.capacidad) {
+        alert("El nombre y la capacidad son obligatorios.");
+        return;
+    }
 
     // 1. Construir el objeto complejo para el backend
     const salonPayload = {
-      // id: data.id, // Si es edición, envías el ID. Si es nuevo, el backend lo asigna.
+      id_propietario: this.idPropietarioLogueado,
       nombre: data.nombre,
       capacidad: data.capacidad,
       descripcion: data.descripcion,
@@ -149,7 +181,11 @@ export class SalonInfoComponent {
       
       // Estructuras anidadas
       ubicacion: {
-        direccion: data.direccion, // Tienes calle/numero/colonia en el HTML, pero no en el formControlName. Se ajusta abajo.
+        calle: data.calle,
+        numero: data.numero,
+        colonia: data.colonia,
+        estado: data.estado,
+        pais: data.pais,
         ciudad: data.ciudad,
         cp: data.cp,
         lat: data.lat,
