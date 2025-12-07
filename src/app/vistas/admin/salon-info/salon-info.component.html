@@ -40,7 +40,8 @@
         <label *ngFor="let s of listaServicios">
           <input type="checkbox"
                  [value]="s"
-                 (change)="toggleServicio($event)">
+                 (change)="toggleServicio($event)"
+                 [checked]="formSalon.get('servicios')?.value.includes(s)">
           {{ s }}
         </label>
       </div>

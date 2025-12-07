@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { SalonInfoComponent } from "./salon-info/salon-info.component";
 import { PropietarioService } from '../../servicios/propietario.service';
 import { CommonModule } from '@angular/common';
+import { PropietarioSalonesComponent } from '../../propietario-salones/propietario-salones.component';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [SalonInfoComponent, CommonModule],
+  imports: [SalonInfoComponent, CommonModule, PropietarioSalonesComponent],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.css'
 })
