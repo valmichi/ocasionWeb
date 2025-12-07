@@ -16,8 +16,15 @@
       <label>Descripción</label>
       <textarea formControlName="descripcion"></textarea>
 
+      <label>Telefono</label>
+      <input type="number" formControlName="telefono">
+
+      <label>Email</label>
+      <input type="email" formControlName="email">
+
       <label>Precio por hora</label>
       <input type="number" formControlName="precioHora">
+      
     <!--  Input para imagenes -->
       <label>Imágenes del salón</label>
 
@@ -41,28 +48,26 @@
       <!-- Ubicación -->
       <h3>Ubicación del salón</h3>
 
-      <label>Dirección</label>
-
       <label>Calle</label>
-      <input formControlName="calle">
+      <input formControlName="calle" (input)="updateMapaPreview()">
 
       <label>Número</label>
-      <input formControlName="numero">
+      <input formControlName="numero" (input)="updateMapaPreview()">
 
       <label>Colonia</label>
-      <input formControlName="colonia">
+      <input formControlName="colonia" (input)="updateMapaPreview()">
 
       <label>Ciudad</label>
-      <input formControlName="ciudad">
+      <input formControlName="ciudad" (input)="updateMapaPreview()">
 
       <label>Estado</label>
-      <input formControlName="estado">
+      <input formControlName="estado" (input)="updateMapaPreview()">
 
       <label>País</label>
-      <input formControlName="pais">
+      <input formControlName="pais" (input)="updateMapaPreview()">
 
       <label>Código Postal</label>
-      <input formControlName="cp">
+      <input formControlName="cp" (input)="updateMapaPreview()">
 
       <!-- Disponibilidad -->
       <h3>Disponibilidad</h3>
@@ -73,6 +78,7 @@
       <label>Hora fin</label>
       <input type="time" formControlName="horaFin">
 
+      <label>Fechas ocupadas</label>
       <full-calendar [options]="calendarOptions"></full-calendar>
 
       <button class="btn-principal" type="submit">

@@ -1,254 +1,214 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { PropietarioService } from '../../../servicios/propietario.service';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { DomSanitizer } from '@angular/platform-browser';
-import { AuthService } from '../../../servicios/auth.service';
-import { CalendarOptions } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
+import { PropietarioService } from '../../../servicios/propietario.service';
 import { FullCalendarModule } from '@fullcalendar/angular';
-
-declare var google: any;
+import dayGridPlugin from '@fullcalendar/daygrid';
+import { OnChanges } from '@angular/core';
+import interactionPlugin from '@fullcalendar/interaction';
 
 @Component({
   selector: 'app-salon-info',
-  imports: [ReactiveFormsModule, CommonModule, FullCalendarModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FullCalendarModule
+  ],
   templateUrl: './salon-info.component.html',
-  styleUrl: './salon-info.component.css'
+  styleUrls: ['./salon-info.component.css']
 })
+export class SalonInfoComponent implements OnInit, OnChanges {
 
-export class SalonInfoComponent {
-  @Input() salon: any;
-  @Output() cerrar = new EventEmitter();
-  @Output() guardado = new EventEmitter();
+  @Input() salon: any = null;
 
-  formSalon!: FormGroup;
-  listaServicios = ["Mobiliario", "Utilería", "DJ", "Pista de baile", "Catering", "Iluminación", "Estacionamiento", "Seguridad", "Banquetes", "Meseros"];
-  imagenes: File[] = [];
+  @Output() cerrar = new EventEmitter<void>();
+
+  idSalon!: number;
+
+  mapaPreview: SafeResourceUrl | null = null;
+
   imagenesPreview: string[] = [];
+  fechasOcupadas: string[] = [];
+  listaServicios = ['Estacionamiento', 'DJ', 'Utilería', 'Mobiliario', 'Iluminacion', 'Banquetes', "Meseros", "Catering", "Seguridad", "Pista de baile"];
 
-  selectedServicios: string[] = [];
-  fechasNoDisponibles: string[] = [];
-
-  map: any;
-  marker: any;
-  mapaPreview: any = null;
-
-  private idPropietarioLogueado: string | null = null;
-
-  calendarOptions: CalendarOptions = {
+  calendarOptions: any = {
   initialView: 'dayGridMonth',
+  plugins: [dayGridPlugin, interactionPlugin],
   selectable: true,
-  plugins: [dayGridPlugin],
-
-  select: (info) => {
-    const fecha = info.startStr;
-
-    // Evitar duplicados
-    if (!this.fechasNoDisponibles.includes(fecha)) {
-      this.fechasNoDisponibles.push(fecha);
-    }
-
-    // mostrar evento en el calendario
-    this.calendarOptions.events = this.fechasNoDisponibles.map(f => ({
-      title: "No disponible",
-      start: f,
-      allDay: true,
-      display: "background",
-      backgroundColor: "#ff8a80"
-    }));
-  }
+  dateClick: this.onFechaClick.bind(this),
+  events: []
 };
+
+
+  formSalon: any;
 
   constructor(
     private fb: FormBuilder,
-    private propietarioService: PropietarioService, 
-    private sanitizer: DomSanitizer,
-    private authService: AuthService
-  ) {}
+    private route: ActivatedRoute,
+    private propietarioService: PropietarioService,
+    private sanitizer: DomSanitizer
+  ) {
 
-  ngOnInit() {
-    // Obtener el ID del propietario logueado al iniciar el componente
-    const currentUser = this.authService.getUser();
-    // Asumiendo que el ID incremental del sistema está en 'id'
-    this.idPropietarioLogueado = currentUser?.id?.toString() || null;
-
+    // ---- SE CREA AQUÍ PARA EVITAR EL ERROR ----
     this.formSalon = this.fb.group({
-      id: [this.salon?.id],
-      nombre: [this.salon?.nombre || ""],
-      capacidad: [this.salon?.capacidad || ""],
-      descripcion: [this.salon?.descripcion || ""],
-      precioHora: [this.salon?.precioHora || ""],
+      nombre: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      capacidad: ['', Validators.required],
+      telefono: ['', Validators.required],
+      email: ['', Validators.required],
+      precioHora: ['', Validators.required],
 
-      servicios: [this.salon?.servicios || []],
+      calle: ['', Validators.required],
+      numero: ['', Validators.required],
+      colonia: ['', Validators.required],
+      ciudad: ['', Validators.required],
+      estado: ['', Validators.required],
+      pais: ['', Validators.required],
+      cp: ['', Validators.required],
 
-      calle: [this.salon?.ubicacion?.calle || ""],
-      numero: [this.salon?.ubicacion?.numero || ""],
-      colonia: [this.salon?.ubicacion?.colonia || ""],
-      estado: [this.salon?.ubicacion?.estado || ""],
-      pais: [this.salon?.ubicacion?.pais || ""],
+      horaInicio: ['', Validators.required],
+      horaFin: ['', Validators.required],
 
-      ciudad: [this.salon?.ubicacion?.ciudad || ""],
-      cp: [this.salon?.ubicacion?.cp || ""],
-      lat: [this.salon?.ubicacion?.lat || null],
-      lng: [this.salon?.ubicacion?.lng || null],
+      // ---- TIPADOS CORRECTOS ----
+      servicios: this.fb.control<string[]>([]),
+      imagenes: this.fb.control<any[]>([]),
 
-      horaInicio: [this.salon?.disponibilidad?.horaInicio || ""],
-      horaFin: [this.salon?.disponibilidad?.horaFin || ""],
-
-      imagenes: [this.salon?.imagenes || []]
+      mapa: ['']
     });
-
-    this.selectedServicios = this.formSalon.value.servicios || [];
-
-    setTimeout(() => this.initMap(), 300);
   }
 
-  toggleServicio(e: any) {
-    const servicio = e.target.value;
+  ngOnInit(): void {
+    this.idSalon = Number(this.route.snapshot.paramMap.get('id'));
+    this.cargarSalon();
+  }
 
-    if (e.target.checked) {
-      this.selectedServicios.push(servicio);
-    } else {
-      this.selectedServicios = this.selectedServicios.filter(s => s !== servicio);
+  cargarSalon() {
+  this.propietarioService.getSalonById(this.idSalon).subscribe({
+    next: (data: any) => {
+
+      // Normalizar datos
+      data.servicios = data.servicios ?? [];
+      data.imagenes = data.imagenes ?? [];
+      data.fechasOcupadas = data.fechasOcupadas ?? [];
+
+      this.salon = data;
+      this.formSalon.patchValue(data);
+      this.updateMapaPreview();
+    },
+    error: err => console.error(err)
+  });
+}
+
+  generarDireccionCompleta(): string {
+    const f = this.formSalon.value;
+    return `${f.calle} ${f.numero}, ${f.colonia}, ${f.ciudad}, ${f.estado}, ${f.pais}, ${f.cp}`;
+  }
+
+  updateMapaPreview() {
+    const direccion = this.generarDireccionCompleta();
+
+    if (!direccion.trim()) {
+      this.mapaPreview = null;
+      return;
     }
 
-    this.formSalon.patchValue({ servicios: this.selectedServicios });
+    const url = `https://www.google.com/maps?q=${encodeURIComponent(direccion)}&output=embed`;
+    this.mapaPreview = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
- initMap(retry = 0) {
-  const MAX_RETRIES = 10;
-  if (typeof google === 'undefined' || !google.maps || !google.maps.Map) {
-    if (retry < MAX_RETRIES) {
-            // console.log(`Esperando carga de Google Maps... Intento ${retry + 1}`);
-            setTimeout(() => this.initMap(retry + 1), 300); // Reintentar
-        } else {
-            console.error("No se pudo cargar Google Maps API. Verifica el script tag en index.html.");
-        }
-        return;
-   }
-  const lat = this.formSalon.value.lat || 19.4326;
-  const lng = this.formSalon.value.lng || -99.1332;
+ guardar() {
+  if (!this.idSalon) {
+    alert("No se encontró el salón.");
+    return;
+  }
 
-  this.map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat, lng },
-    zoom: 14,
-  });
-
-  this.marker = new google.maps.Marker({
-    position: { lat, lng },
-    map: this.map,
-    draggable: true,
-  });
-
-  //Cada que se mueva el pin, actualiza lat/lng y mapa preview
-  this.marker.addListener("dragend", () => {
-    const pos = this.marker.getPosition();
-
-    this.formSalon.patchValue({
-      lat: pos.lat(),
-      lng: pos.lng()
-    });
-
-    this.updateMapaPreview();
-  });
-
-  //También genera mapa preview inicial
-  this.updateMapaPreview();
+  this.guardarCambios();
 }
 
 
-  guardar() {
-    const data = this.formSalon.value;
-
-    if (!this.idPropietarioLogueado) {
-        alert("Error de autenticación: El propietario no está logueado o no se pudo obtener su ID.");
-        return;
-    }
-    if (!data.nombre || !data.capacidad) {
-        alert("El nombre y la capacidad son obligatorios.");
-        return;
+  guardarCambios() {
+    if (this.formSalon.invalid) {
+      alert('Faltan datos obligatorios.');
+      return;
     }
 
-    // 1. Construir el objeto complejo para el backend
-    const salonPayload = {
-      id_propietario: this.idPropietarioLogueado,
-      nombre: data.nombre,
-      capacidad: data.capacidad,
-      descripcion: data.descripcion,
-      precioHora: data.precioHora,
-      servicios: this.selectedServicios, // Usar la lista seleccionada
-      
-      // Estructuras anidadas
-      ubicacion: {
-        calle: data.calle,
-        numero: data.numero,
-        colonia: data.colonia,
-        estado: data.estado,
-        pais: data.pais,
-        ciudad: data.ciudad,
-        cp: data.cp,
-        lat: data.lat,
-        lng: data.lng
-      },
-      disponibilidad: {
-        fechasNoDisponibles: this.fechasNoDisponibles,
-        horaInicio: data.horaInicio,
-        horaFin: data.horaFin
-      },
-      // Nota: Las imágenes deben manejarse como Base64 si no usas FormData, pero aquí solo enviamos los datos.
-      imagenes: this.formSalon.value.imagenes || []
-    };
+    const f = this.formSalon.value;
+    const direccion = this.generarDireccionCompleta();
+    const urlMapa = `https://www.google.com/maps?q=${encodeURIComponent(direccion)}&output=embed`;
 
-    // 2. Llamar al servicio y suscribirse
-    this.propietarioService.guardarSalon(salonPayload).subscribe({
-      next: (response) => {
-        console.log('Salón guardado con ID:', response.id_salon);
-        alert(`Salón "${response.salon.nombre}" publicado correctamente con ID ${response.id_salon}.`);
-        this.guardado.emit(); // Para que AdminComponent recargue la lista
-        this.cerrar.emit();
-      },
-      error: (err) => {
-        console.error('Error al guardar el salón:', err);
-        alert(`Error al guardar: ${err.error?.error || 'Error de red/servidor'}`);
-      }
-    });
-  }
+    const payload = { 
+      ...f,
+      mapa: urlMapa,
+      fechasOcupadas: this.fechasOcupadas
+    };
+
+
+    this.propietarioService.updateSalon(this.idSalon, payload).subscribe({
+      next: () => alert('Datos actualizados'),
+      error: err => console.error(err)
+    });
+  }
+
+  toggleServicio(event: any) {
+    const servicio = event.target.value;
+    const checked = event.target.checked;
+
+    const lista = [...this.formSalon.value.servicios];
+
+    if (checked) {
+      lista.push(servicio);
+    } else {
+      const i = lista.indexOf(servicio);
+      if (i >= 0) lista.splice(i, 1);
+    }
+
+    this.formSalon.patchValue({ servicios: lista });
+  }
 
   onImagenesSeleccionadas(event: any) {
-  const files: FileList = event.target.files;
+    const archivos = event.target.files;
 
-  this.imagenes = [];
-  this.imagenesPreview = [];
+    this.imagenesPreview = [];
 
-  Array.from(files).forEach(file => {
-    this.imagenes.push(file);
+    for (let file of archivos) {
+      const reader = new FileReader();
+      reader.onload = e => this.imagenesPreview.push(e.target?.result as string);
+      reader.readAsDataURL(file);
+    }
 
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      this.imagenesPreview.push(e.target.result);
-    };
-    reader.readAsDataURL(file);
-  });
+    this.formSalon.patchValue({ imagenes: archivos });
+  }
 
-  // Guarda las imágenes en el form (en base64 / o nombres si usas backend)
-  this.formSalon.patchValue({ imagenes: this.imagenes });
+  ngOnChanges() {
+  if (this.salon) {
+    this.formSalon.patchValue(this.salon);
+    this.updateMapaPreview();
+  }
 }
 
-updateMapaPreview() {
-  const direccion = this.generarDireccionCompleta();
+onFechaClick(info: any) {
+  const fecha = info.dateStr;
 
-  if (!direccion.trim()) return;
+  if (this.fechasOcupadas.includes(fecha)) {
+    this.fechasOcupadas = this.fechasOcupadas.filter(f => f !== fecha);
+  } else {
+    this.fechasOcupadas.push(fecha);
+  }
 
-  const url = `https://www.google.com/maps?q=${encodeURIComponent(direccion)}&output=embed`;
-  this.mapaPreview = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-}
+  this.calendarOptions = {
+    ...this.calendarOptions,
+    events: this.fechasOcupadas.map(f => ({
+      title: 'No disponible',
+      start: f,
+      display: 'background',
+      backgroundColor: '#ff000055'
+    }))
+  };
 
-
-generarDireccionCompleta() {
-  const f = this.formSalon.value;
-
-  return `${f.calle} ${f.numero}, ${f.colonia}, ${f.ciudad}, ${f.estado}, ${f.pais}, ${f.cp}`;
+  this.formSalon.patchValue({ fechasOcupadas: this.fechasOcupadas });
 }
 
 }

@@ -25,4 +25,15 @@ export class PropietarioService {
         map(response => response.data || [])
     );
   }
+
+  getSalonById(id: number): Observable<any> {
+  return this.http.get<any>(`${this.apiUrl}/leer/salon/${id}`).pipe(
+    map(response => response.data || null)
+  );
+}
+
+updateSalon(id: number, salonData: any): Observable<any> {
+  return this.http.put<any>(`${this.apiUrl}/actualizar/salon/${id}`, salonData);
+}
+
 }
