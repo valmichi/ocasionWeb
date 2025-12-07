@@ -5,8 +5,8 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
 
+export class AuthService {
     private userKey = 'userData';
     private tokenKey = 'appToken'; // Clave para guardar el token de la aplicación (JWT)
     private apiUrl = 'http://192.168.193.127:3000/api/auth/google';
@@ -17,7 +17,6 @@ export class AuthService {
     private currentUserSubject = new BehaviorSubject<any>(this.getUser());
     
     constructor(private http: HttpClient) { }
-
 
   loginWithGoogle(googleToken: string): Observable<any> {
     // El backend espera un objeto { token: 'el_token_de_google' }
@@ -43,7 +42,7 @@ export class AuthService {
                 this.currentUserSubject.next(response.user);
             })
         );
-    }
+  }
 
   // Guardar el token de la aplicación (para futuras peticiones protegidas)
   saveAppToken(token: string) {
@@ -77,7 +76,7 @@ export class AuthService {
   isAuthenticated(): boolean {
       const user = this.getUser();
       return !!user && !!this.getToken(); 
-    }
+  }
 
   logout() {
     localStorage.removeItem(this.userKey);
@@ -92,5 +91,5 @@ export class AuthService {
                 console.log(`Usuario registrado en el backend. ID: ${response.id_registro}`);
             })
         );
-    }
+  }
 }

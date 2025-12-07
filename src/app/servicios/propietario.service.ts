@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
+
 export class PropietarioService {
   private apiUrl = 'http://192.168.193.127:3000/api'; 
   
@@ -27,13 +28,17 @@ export class PropietarioService {
   }
 
   getSalonById(id: number): Observable<any> {
-  return this.http.get<any>(`${this.apiUrl}/leer/salon/${id}`).pipe(
-    map(response => response.data || null)
-  );
-}
+    return this.http.get<any>(`${this.apiUrl}/salon/${id}`);
+  }
 
 updateSalon(id: number, salonData: any): Observable<any> {
+  console.log(`[FRONTEND] Enviando actualización de salón ID: ${id}...`);
   return this.http.put<any>(`${this.apiUrl}/actualizar/salon/${id}`, salonData);
+}
+
+getSalonesByPropietario(idPropietario: string): Observable<any[]> {
+    console.log(`[FRONTEND] Solicitando salones para propietario ID: ${idPropietario}...`);
+    return this.http.get<any[]>(`${this.apiUrl}/propietario/salones?id_propietario=${idPropietario}`);
 }
 
 }

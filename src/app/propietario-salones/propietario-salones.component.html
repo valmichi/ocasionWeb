@@ -1,0 +1,26 @@
+<h2>Gestión de Salones Publicados</h2>    
+
+<div *ngIf="salones.length === 0 && !isLoading" class="alerta">
+    Aún no has publicado ningún salón. ¡Comienza a publicar!
+</div>
+
+<div *ngIf="isLoading" class="cargando">Cargando salones...</div>
+
+<div *ngIf="salones.length > 0" class="lista-salones">
+    <div *ngFor="let salon of salones" class="tarjeta-salon">
+        <h3>{{ salon.nombre }}</h3>
+        <p><strong>ID:</strong> {{ salon.id }}</p>
+        <p><strong>Capacidad:</strong> {{ salon.capacidad }} personas</p>
+        <p><strong>Precio:</strong> \${{ salon.precioHora }} / hora</p>
+        <button class="btn-secundario" (click)="openEditModal(salon)">
+                Editar / Ver Disponibilidad
+        </button>
+    </div>
+</div>
+
+<app-salon-info 
+    *ngIf="showEditModal"
+    [salon]="salonSeleccionado"
+    (cerrar)="closeEditModal()"
+    (guardado)="onSalonGuardado()">
+</app-salon-info>
