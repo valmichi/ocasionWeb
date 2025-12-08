@@ -1,4 +1,4 @@
-/* Fondo del modal */
+/* ======= FONDO DEL MODAL ======= */
 .modal {
   position: fixed;
   top: 0;
@@ -6,109 +6,161 @@
   width: 100%;
   height: 100%;
   background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(4px);
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 20px;
-  z-index: 1000;
+  justify-content: center;
+  padding: 30px;
+  z-index: 9999;
 }
 
-/* Contenedor del formulario */
+/* ======= CONTENEDOR DEL FORMULARIO ======= */
 .form-container {
-  background: #ffffff;
-  padding: 30px;
-  width: 95%;
-  max-width: 700px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.20);
+  width: 90%;
+  max-width: 850px;
+  background: rgba(255,255,255,0.90);
+  backdrop-filter: blur(6px);
+  padding: 35px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
   max-height: 90vh;
   overflow-y: auto;
+  animation: fadeUp 0.35s ease-out;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .form-container h2 {
   text-align: center;
+  font-size: 2rem;
   margin-bottom: 20px;
-  font-weight: 600;
-  color: #222;
+  color: #5f1e4b;
 }
 
+/* ======= FORM ======= */
+form {
+  display: grid;
+  gap: 12px;
+}
+
+/* ======= LABEL ======= */
 label {
-  font-weight: 500;
+  font-weight: 600;
   margin-top: 10px;
+  color: #5f1e4b;
 }
 
+/* ======= INPUTS ======= */
 input, textarea {
   width: 100%;
-  padding: 10px;
-  border-radius: 6px;
+  padding: 10px 12px;
+  border-radius: 10px;
   border: 1px solid #ccc;
-  margin-bottom: 12px;
+  background: #ffffff;
+  transition: border 0.2s;
+  font-size: 1rem;
 }
 
+input:focus, textarea:focus {
+  border-color: #ab1a73;
+  outline: none;
+}
+
+/* ======= TEXTAREA ======= */
 textarea {
+  min-height: 90px;
   resize: vertical;
 }
 
-h3 {
-  margin-top: 20px;
-  font-weight: 600;
-  color: #444;
+/* ======= SERVICIOS (checkbox grid) ======= */
+.servicios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 12px;
+  border-left: 4px solid #ab1a73;
 }
 
-/* Previews */
-.preview-container {
+.servicios label {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ======= IMÁGENES PREVIEW ======= */
+.preview-container {
   margin-top: 10px;
-  margin-bottom: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .preview-img {
   width: 120px;
-  height: 90px;
+  height: 120px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
 
-/* Servicios */
-.servicios {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 20px;
+/* ======= SUBTÍTULOS (h3) ======= */
+h3 {
+  margin-top: 20px;
+  font-size: 1.4rem;
+  color: #5f1e4b;
+  border-left: 4px solid #ab1a73;
+  padding-left: 8px;
 }
 
-.servicios label {
-  font-size: 0.95rem;
-}
-
-/* Botones */
+/* ======= BOTONES ======= */
 .btn-principal {
-  background: #28a745;
+  margin-top: 25px;
+  padding: 12px;
+  background: #129b00;
   color: white;
-  padding: 10px 16px;
+  font-weight: 600;
   border: none;
-  border-radius: 6px;
-  width: 100%;
-  margin-top: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.25s;
 }
 
 .btn-principal:hover {
-  background: #218838;
+  background: #237d17;
 }
 
 .btn-secundario {
-  background: #dc3545;
-  color: white;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  width: 100%;
   margin-top: 10px;
+  padding: 10px;
+  background: rgb(126, 0, 0);
+  color: #ffffff;
+  font-weight: 600;
+  border: 2px solid #720000;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.25s;
 }
 
 .btn-secundario:hover {
-  background: #c82333;
+  background: #3e0000;
+  color: white;
+}
+
+/* ======= SCROLL BONITO DEL MODAL ======= */
+.form-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.form-container::-webkit-scrollbar-thumb {
+  background: #ab1a73;
+  border-radius: 10px;
+}
+
+.form-container::-webkit-scrollbar-track {
+  background: #e5e5e5;
 }

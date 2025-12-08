@@ -1,59 +1,97 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: 
+    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+    url('/fondoUsuario.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  padding: 40px 20px;
+}
+
+/* ======== CONTENEDOR GENERAL ======== */
 .admin-container {
   max-width: 900px;
   margin: 40px auto;
-  background: #ffffff;
   padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', sans-serif;
 }
 
+/* ======== TÍTULO ======== */
 .admin-container h1 {
   text-align: center;
+  font-size: 2.3rem;
+  font-weight: bold;
+  color: #cfe5fa;
   margin-bottom: 25px;
-  font-size: 2rem;
-  font-weight: 600;
-  color: #333;
 }
 
+/* ======== BOTÓN PRINCIPAL ======== */
 .btn-principal {
-  background: #0066ff;
-  color: white;
-  padding: 10px 18px;
-  border-radius: 6px;
+  display: block;
+  margin: 0 auto 30px auto;
+  padding: 12px 25px;
+  font-size: 1rem;
   border: none;
-  margin-bottom: 25px;
+  border-radius: 10px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #259fe6, #0a58ca);
+  color: white;
+  transition: 0.25s;
 }
 
 .btn-principal:hover {
-  background: #0052cc;
+  background: linear-gradient(135deg, #0850be, #0d6efd);
+  transform: translateY(-2px);
 }
 
+/* ======== TARJETAS DE LOS SALONES ======== */
 .salon-card {
-  background: #f8f9fa;
-  border-radius: 10px;
+  background: white;
   padding: 20px;
-  margin-bottom: 18px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+  margin-bottom: 20px;
+  border-radius: 15px;
+  border-left: 5px solid #0d6efd;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.salon-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 18px rgba(0,0,0,0.12);
 }
 
 .salon-card h3 {
-  font-size: 1.4rem;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  font-size: 1.6rem;
+  color: #2c3e50;
 }
 
+/* ======== TEXTO DE INFORMACIÓN ======== */
 .salon-card p {
-  margin: 3px 0;
+  margin: 5px 0;
+  font-size: 1rem;
+  color: #444;
 }
 
+.salon-card strong {
+  color: #000;
+}
+
+/* ======== BOTÓN SECUNDARIO ======== */
 .btn-secundario {
-  background: #6c757d;
+  margin-top: 15px;
+  background: #27851c;
   color: white;
-  padding: 8px 14px;
-  border-radius: 6px;
-  margin-top: 10px;
+  padding: 10px 18px;
   border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.25s;
 }
 
 .btn-secundario:hover {
-  background: #5a6268;
+  background: #125400;
+  transform: translateY(-2px);
 }
