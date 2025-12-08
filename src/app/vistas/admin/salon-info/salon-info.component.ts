@@ -175,7 +175,7 @@ export class SalonInfoComponent implements OnInit, OnChanges {
     }
 
     // CORRECCIÓN URL MAPA: Se eliminó el '0' extra y se usa encodeURIComponent
-    const url = `http://googleusercontent.com/maps.google.com/${encodeURIComponent(direccion)}&output=embed`;
+    const url = `https://www.google.com/maps?q=${encodeURIComponent(direccion)}&output=embed`;
     this.mapaPreview = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
@@ -217,7 +217,8 @@ export class SalonInfoComponent implements OnInit, OnChanges {
     const f = this.formSalon.value;
     const direccion = this.generarDireccionCompleta();
     // Corregido: Plantilla de URL sin el '0' extra.
-    const urlMapa = `http://googleusercontent.com/maps.google.com/${encodeURIComponent(direccion)}&output=embed`; 
+    const urlMapa = `https://www.google.com/maps?q=${encodeURIComponent(direccion)}&output=embed`;
+ 
     
     // CREACIÓN DEL PAYLOAD CON ESTRUCTURA ANIDADA
     const payload = {
@@ -270,7 +271,7 @@ export class SalonInfoComponent implements OnInit, OnChanges {
     const f = this.formSalon.value;
     const direccion = this.generarDireccionCompleta();
     // Corregido: Plantilla de URL sin el '0' extra.
-    const urlMapa = `http://googleusercontent.com/maps.google.com/${encodeURIComponent(direccion)}&output=embed`; 
+    const urlMapa = `https://www.google.com/maps?q=${encodeURIComponent(direccion)}&output=embed`;
     
     // CREACIÓN DEL PAYLOAD CON ESTRUCTURA ANIDADA
     const payload = { 

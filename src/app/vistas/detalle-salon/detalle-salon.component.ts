@@ -64,8 +64,8 @@ export class DetalleSalonComponent implements OnInit {
             })) || [];
 
             // Sanitizar URL del mapa (Asegúrate de que 'mapa' exista en la ubicación)
-            const mapUrl = data.ubicacion?.mapa || 'about:blank';
-            this.mapaSeguro = this.sanitizer.bypassSecurityTrustResourceUrl(mapUrl);
+            const urlMapa = this.generarUrlMapa(this.salon.ubicacion);
+            this.mapaSeguro = this.sanitizer.bypassSecurityTrustResourceUrl(urlMapa);
 
             // Actualizar calendario
             this.calendarOptions = {
@@ -79,4 +79,11 @@ export class DetalleSalonComponent implements OnInit {
         }
     });
   }
+
+  generarUrlMapa(ubicacion: any): string {
+  const direccion = `${ubicacion.calle} ${ubicacion.numero}, ${ubicacion.colonia}, ${ubicacion.municipio}, ${ubicacion.estado}, ${ubicacion.codigoPostal}`;
+
+  return `https://www.google.com/maps?q=${encodeURIComponent(direccion)}&output=embed`;
+  }
+
 }
