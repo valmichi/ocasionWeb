@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
+import { PropietarioService } from '../../servicios/propietario.service';
 
 // FULLCALENDAR
 import { FullCalendarModule } from '@fullcalendar/angular';
@@ -14,63 +15,68 @@ import dayGridPlugin from '@fullcalendar/daygrid';
   templateUrl: './detalle-salon.component.html',
   styleUrl: './detalle-salon.component.css'
 })
-export class DetalleSalonComponent {
 
+export class DetalleSalonComponent implements OnInit {
   salon: any = null;
   eventosOcupados: any[] = [];
+  mapaSeguro: SafeResourceUrl | null = null;
 
   calendarOptions: any = {
     initialView: 'dayGridMonth',
     plugins: [dayGridPlugin],
     height: 500,
-    events: []  // se llenará dinámicamente
+    events: [] 
   };
 
   constructor(
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private propietarioService: PropietarioService
   ) {}
 
   ngOnInit() {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-
-    const salones = [
-      {
-        id: 1,
-        nombre: 'Salón Montecarlo',
-        descripcion: 'Un salón elegante perfecto para eventos sociales.',
-        capacidad: 150,
-        imgs: ['/detalle1.jpg','/detalle2.jpg','/detalle3.jpg'],
-        // Fechas ocupadas simuladas
-      fechas_ocupadas: [
-        '2025-11-15',
-        '2025-11-22',
-        '2025-11-10'
-      ],
-        servicios: ['Clima', 'Audio profesional', 'Luces LED', 'Estacionamiento'],
-        eventos: ['Bodas', 'XV años', 'Graduaciones', 'Empresariales'],
-        mapa: 'https://www.google.com/maps/embed?...'
-      }
-    ];
-
-    const data = salones.find(s => s.id === id);
-    if (data) {
-      this.salon = {
-        ...data,
-        mapaSeguro: this.sanitizer.bypassSecurityTrustResourceUrl(data.mapa)
-      };
+    // Obtiene el ID de la URL
+    const idParam = this.route.snapshot.paramMap.get('id');
+    const id = idParam ? Number(idParam) : 0;
+    
+    if (id === 0 || isNaN(id)) {
+        console.error("ID del salón inválido.");
+        return;
     }
 
-    this.eventosOcupados = this.salon.fechas_ocupadas.map((fecha: string) => ({
-      start: fecha,
-      display: 'background',
-      backgroundColor: '#ff9999'
-    }));
+    // Cargar datos del backend
+    this.propietarioService.getSalonById(id).subscribe({
+        next: (data: any) => {
+            if (!data) {
+                console.error('Salón no encontrado.');
+                return;
+            }
+            
+            // Asignar datos del salón
+            this.salon = data;
 
-    // ⭐ Se actualiza calendarOptions dinámicamente
-    this.calendarOptions = {
-      ...this.calendarOptions, // conserva la config inicial
-      events: this.eventosOcupados
-    };
-  }
+            // Mapear eventos de disponibilidad (usando el campo correcto del backend)
+            this.eventosOcupados = data.disponibilidad?.fechasNoDisponibles?.map((fecha: string) => ({
+                title: 'No disponible',
+                start: fecha,
+                display: 'background',
+                backgroundColor: '#ff9999'
+            })) || [];
+
+            // Sanitizar URL del mapa (Asegúrate de que 'mapa' exista en la ubicación)
+            const mapUrl = data.ubicacion?.mapa || 'about:blank';
+            this.mapaSeguro = this.sanitizer.bypassSecurityTrustResourceUrl(mapUrl);
+
+            // Actualizar calendario
+            this.calendarOptions = {
+                ...this.calendarOptions,
+                events: this.eventosOcupados
+            };
+        },
+        error: (err: any) => {
+            console.error('Error al cargar el detalle del salón:', err);
+            alert(`Error al cargar el salón: ${err.error?.error || 'Fallo de conexión'}`);
+        }
+    });
+  }
 }

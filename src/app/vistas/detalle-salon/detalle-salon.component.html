@@ -1,47 +1,28 @@
 <div class="contenedor" *ngIf="salon">
 
-  <h1 class="titulo">{{ salon.nombre }}</h1>
+  <h1 class="titulo">{{ salon.nombre }}</h1>
 
-  <!-- Galería -->
-  <div class="galeria">
-    <img *ngFor="let img of salon.imgs" [src]="img" alt="Foto salón" />
-  </div>
+    <div class="galeria">
+                <img *ngFor="let img of salon.imagenes" [src]="img" alt="Foto salón" /> 
+  </div>
 
-  <!-- Info general -->
-  <div class="info">
-    <p>{{ salon.descripcion }}</p>
-    <p><strong>Capacidad:</strong> {{ salon.capacidad }} personas</p>
-  </div>
+    <div class="info">
+    <p>{{ salon.descripcion }}</p>
+    <p><strong>Capacidad:</strong> {{ salon.capacidad }} personas</p>
+    <p *ngIf="salon.ubicacion">
+        <strong>Ubicación:</strong> {{ salon.ubicacion.calle }} #{{ salon.ubicacion.numero }}, 
+        {{ salon.ubicacion.colonia }}, {{ salon.ubicacion.ciudad }}
+    </p>
+                <p><strong>Teléfono:</strong> {{ salon.telefono }}</p>
+    <p><strong>Email:</strong> {{ salon.email }}</p>
+  </div>
 
-  <!-- Servicios -->
-  <h2>Servicios incluidos</h2>
-  <ul class="lista">
-    <li *ngFor="let s of salon.servicios"> {{ s }}</li>
-  </ul>
-
-  <!-- Eventos permitidos -->
-  <h2>Eventos permitidos</h2>
-  <ul class="lista">
-    <li *ngFor="let e of salon.eventos"> {{ e }}</li>
-  </ul>
-
-    <!-- Calendario de disponibilidad -->
-     <h2>Fechas disponibles</h2>
-
-    <full-calendar [options]="calendarOptions"></full-calendar>
-
-  <!-- Google Maps -->
-  <h2>Ubicación</h2>
-  <iframe 
-    width="100%" 
-    height="300px" 
-    style="border:0;border-radius:10px;"
-    loading="lazy"
-    allowfullscreen
-    [src]="salon.mapaSeguro">
-  </iframe>
-
-  <!-- Botón reservar -->
-  <button class="btn-reservar">Reservar</button>
-
+      <h2>Ubicación</h2>
+  <iframe 
+    width="100%" 
+    height="300px" 
+    style="border:0;border-radius:10px;"
+    loading="lazy"
+    allowfullscreen
+    [src]="mapaSeguro">  </iframe>
 </div>
