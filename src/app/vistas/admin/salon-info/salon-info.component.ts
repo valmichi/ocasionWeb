@@ -113,6 +113,12 @@ export class SalonInfoComponent implements OnInit, OnChanges {
 
   // Rellenar el formulario con datos anidados del salón
   patchFormValues(data: any): void {
+
+  // Convertir objeto → array
+  const imagenesArray = Array.isArray(data.imagenes)
+    ? data.imagenes
+    : Object.values(data.imagenes || {});
+
     // Mapeo de campos planos
     this.formSalon.patchValue({
       nombre: data.nombre,
@@ -137,10 +143,11 @@ export class SalonInfoComponent implements OnInit, OnChanges {
 
       // Arrays
       servicios: data.servicios || [],
-      imagenes: data.imagenes || [],
+      imagenes: imagenesArray
+
     });
 
-    this.imagenesPreview = data.imagenes || [];
+    this.imagenesPreview = imagenesArray;
     this.formSalon.get('servicios')?.setValue(data.servicios || []);
     this.fechasOcupadas = data.disponibilidad?.fechasNoDisponibles || []; // Asegurar leer fechasNoDisponibles
     this.updateCalendarEvents();
@@ -156,6 +163,7 @@ export class SalonInfoComponent implements OnInit, OnChanges {
           this.salon = data;
           this.patchFormValues(data);
         }
+
       },
       error: err => console.error('Error al cargar salón por ID:', err)
     });
@@ -218,7 +226,9 @@ export class SalonInfoComponent implements OnInit, OnChanges {
     const direccion = this.generarDireccionCompleta();
     // Corregido: Plantilla de URL sin el '0' extra.
     const urlMapa = `https://www.google.com/maps?q=${encodeURIComponent(direccion)}&output=embed`;
- 
+    const imagenesParaEnviar = (this.imagenesPreview && this.imagenesPreview.length > 0)
+  ? this.imagenesPreview // Base64 recién convertidos
+  : (f.imagenes || []);
     
     // CREACIÓN DEL PAYLOAD CON ESTRUCTURA ANIDADA
     const payload = {
@@ -232,7 +242,7 @@ export class SalonInfoComponent implements OnInit, OnChanges {
         email: f.email,
         precioHora: f.precioHora,
         servicios: f.servicios,
-        imagenes: f.imagenes,
+        imagenes: imagenesParaEnviar,
 
         // OBJETO ANIDADO DE UBICACIÓN (¡CLAVE PARA EVITAR EL ERROR 400!)
         ubicacion: { 
@@ -272,6 +282,9 @@ export class SalonInfoComponent implements OnInit, OnChanges {
     const direccion = this.generarDireccionCompleta();
     // Corregido: Plantilla de URL sin el '0' extra.
     const urlMapa = `https://www.google.com/maps?q=${encodeURIComponent(direccion)}&output=embed`;
+    const imagenesParaEnviar = (this.imagenesPreview && this.imagenesPreview.length > 0)
+  ? this.imagenesPreview // Base64 recién convertidos
+  : (f.imagenes || []);
     
     // CREACIÓN DEL PAYLOAD CON ESTRUCTURA ANIDADA
     const payload = { 
@@ -286,7 +299,7 @@ export class SalonInfoComponent implements OnInit, OnChanges {
         email: f.email,
         precioHora: f.precioHora,
         servicios: f.servicios,
-        imagenes: f.imagenes,
+        imagenes: imagenesParaEnviar,
 
         ubicacion: { 
             calle: f.calle,
@@ -335,16 +348,29 @@ export class SalonInfoComponent implements OnInit, OnChanges {
   }
 
   // Manejo de imágenes (Se mantiene, solo guarda las referencias/Base64 en el form)
-  onImagenesSeleccionadas(event: any): void {
-    const archivos = event.target.files;
-    this.imagenesPreview = [];
-    for (let file of archivos) {
-      const reader = new FileReader();
-      reader.onload = e => this.imagenesPreview.push(e.target?.result as string); 
-      reader.readAsDataURL(file);
-    }
-    this.formSalon.patchValue({ imagenes: archivos });
-  }
+  async onImagenesSeleccionadas(event: any): Promise<void> {
+  const archivos: FileList = event.target.files;
+  if (!archivos || archivos.length === 0) {
+    // Si no hay archivos, no hacemos nada (preservamos las imágenes anteriores)
+    return;
+  }
+
+  try {
+    // Convertimos todos los files a base64 (array de promesas)
+    const filesArray = Array.from(archivos) as File[];
+    const base64Array = await Promise.all(filesArray.map(f => this.fileToBase64(f)));
+
+    // Guardamos las previsualizaciones (para mostrar en Admin)
+    this.imagenesPreview = base64Array.slice(); // copia
+
+    // Actualizamos el form control con BANDEJA de Base64 (strings)
+    // IMPORTANTE: guardamos BASE64, no FileList
+    this.formSalon.patchValue({ imagenes: base64Array });
+  } catch (err) {
+    console.error('Error al convertir imágenes a Base64:', err);
+    alert('Error procesando imágenes. Intenta con archivos más pequeños.');
+  }
+}
 
   // Manejo de calendario
   onFechaClick(info: any): void {
@@ -359,4 +385,13 @@ export class SalonInfoComponent implements OnInit, OnChanges {
     this.updateCalendarEvents();
     this.formSalon.patchValue({ fechasOcupadas: this.fechasOcupadas });
   }
+
+  private fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
+  });
+  }
 }

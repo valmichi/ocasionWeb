@@ -4,7 +4,7 @@
 
     <h2>{{ salon ? 'Editar Salón' : 'Nuevo Salón' }}</h2>
 
-    <form [formGroup]="formSalon" (ngSubmit)="guardar()">
+    <form [formGroup]="formSalon">
 
       <!-- Datos del salón -->
       <label>Nombre</label>
@@ -82,9 +82,10 @@
       <label>Fechas ocupadas</label>
       <full-calendar [options]="calendarOptions"></full-calendar>
 
-      <button class="btn-principal" type="submit">
-        Guardar
+      <button class="btn-principal" type="button" (click)="guardar()">
+          Guardar
       </button>
+
 
       <button class="btn-secundario" (click)="cerrar.emit()">
         Cancelar
