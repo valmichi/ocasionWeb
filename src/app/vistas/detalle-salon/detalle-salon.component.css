@@ -1,68 +1,91 @@
-body, :host {
-  background-image: url('/fondoUsuario.jpg');
+:host {
+  display: block;
+  min-height: 100vh;
+  background: 
+    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+    url('/fondoUsuario.jpg');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+  padding: 40px 20px;
 }
 
+
+/* ======= CONTENEDOR GENERAL ======= */
 .contenedor {
-  max-width: 900px;
-  margin: 30px auto;
-  background: #ffffff;
+  max-width: 950px;
+  margin: 40px auto;
   padding: 25px;
+  background: #ffffff;
   border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', sans-serif;
 }
 
+/* ======= TITULO ======= */
 .titulo {
+  font-size: 2.4rem;
+  font-weight: 700;
   text-align: center;
-  font-size: 32px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  color: #333;
 }
 
+/* ======= GALERÍA ======= */
 .galeria {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-items: center;
   gap: 15px;
-  overflow-x: auto;
-  padding-bottom: 10px;
+  margin-bottom: 25px;
 }
 
 .galeria img {
-  width: 280px;
-  height: 180px;
+  width: 500px;
+  height: 300px;
   object-fit: cover;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.info {
-  margin: 20px 0;
-  font-size: 18px;
-}
-
-.lista {
-  list-style: none;
-  padding-left: 0;
-}
-
-.lista li {
-  padding: 8px 0;
-  font-size: 18px;
-}
-
-.btn-reservar {
-  background: #ff7b00;
-  color: white;
-  border: none;
-  padding: 15px 20px;
-  font-size: 20px;
   border-radius: 10px;
-  cursor: pointer;
-  display: block;
-  margin: 30px auto 0;
-  transition: 0.3s;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: zoom-in;
 }
 
-.btn-reservar:hover {
-  background: #ffb066;
+.galeria img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 5px 14px rgba(0,0,0,0.2);
+}
+
+/* ======= SECCIÓN DE INFORMACIÓN ======= */
+.info {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  border-left: 4px solid #0d6efd;
+}
+
+.info p {
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.info strong {
+  color: #212529;
+}
+
+/* ======= SUBTÍTULOS (h2) ======= */
+.contenedor h2 {
+  font-size: 1.8rem;
+  margin-top: 40px;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #2c3e50;
+  border-left: 4px solid #0d6efd;
+  padding-left: 10px;
+}
+
+/* ======= IFRAME (MAPA) ======= */
+iframe {
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }

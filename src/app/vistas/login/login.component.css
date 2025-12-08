@@ -12,7 +12,7 @@
     background-size: cover;
     background-position: center;
     position: relative;
-    height: 880px;
+    height: 1050px;
 }
 
 /* capa oscura suave sobre la imagen */
@@ -32,6 +32,7 @@
     padding: 20px;
     font-weight: 700;
     max-width: 80%;
+    margin-top: -290px;
 }
 
 /* DERECHA */
@@ -40,15 +41,19 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     padding: 0 60px;
-    margin-top: -70px;
     background: #ffffff;
 }
 
+.loginForm.modo-registro {
+  margin-top: 300px;  /* bajas el card para que no tape el logo */
+}
+
+
 .logoLogin {
     width: 400px;
-    padding-left: 130px;
-    margin-top: 200px;
+    margin-top: auto;
 }
 
 .contenedor-login {
@@ -63,7 +68,7 @@
 .tabs {
   display: flex;
   margin-bottom: 20px;
-  background: #a4d7f5;
+  background: #ffca96;
   border-radius: 30px;
   overflow: hidden;
 }
@@ -79,7 +84,7 @@
 }
 
 .tabs button.activo {
-  background: #165a9e;
+  background: #db7c1d;
   color: white;
 }
 
@@ -97,6 +102,7 @@ input {
   width: 100%;
   padding: 8px;
   margin-top: 3px;
+  margin-bottom: 5px;
   border-radius: 5px;
   border: 1px solid #ccc;
 }
@@ -105,7 +111,7 @@ input {
   width: 100%;
   margin-top: 20px;
   padding: 10px;
-  background: #165a9e;
+  background: #db7c1d;
   color: white;
   border: none;
   border-radius: 8px;
@@ -113,5 +119,13 @@ input {
 }
 
 .btn-principal:hover {
-  background: #0d4478;
+  background: #af5800;
+}
+
+/* Checkbox de rol */
+input[type="checkbox"] {
+  margin-top: 10px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }

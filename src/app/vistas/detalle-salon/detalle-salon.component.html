@@ -9,8 +9,7 @@
     <div class="info">
     <p>{{ salon.descripcion }}</p>
     <p><strong>Capacidad:</strong> {{ salon.capacidad }} personas</p>
-    <p *ngIf="salon.ubicacion">
-        <strong>Ubicación:</strong> {{ salon.ubicacion.calle }} #{{ salon.ubicacion.numero }}, 
+    <p *ngIf="salon.ubicacion"><strong>Ubicación:</strong> {{ salon.ubicacion.calle }} #{{ salon.ubicacion.numero }}, 
         {{ salon.ubicacion.colonia }}, {{ salon.ubicacion.ciudad }}
     </p>
                 <p><strong>Teléfono:</strong> {{ salon.telefono }}</p>

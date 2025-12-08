@@ -6,11 +6,11 @@
     </div>
   </div>
 
-  <div class="loginForm">
+  <div class="loginForm" [class.modo-registro]="modo === 'registro'">
 
     <img src="logo.jpg" alt="..." class="logoLogin">
 
-<div class="contenedor-login">
+    <div class="contenedor-login">
 
   <!-- Selector de pestañas -->
   <div class="tabs">
@@ -63,7 +63,7 @@
     <label>Contraseña</label>
     <input type="password" [(ngModel)]="registro.password" name="passwordR" required />
 
-    <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px;">
+    <div class="rol-container">
     <input type="checkbox"
            [ngModel]="registro.rol === 'propietario'"
            (ngModelChange)="registro.rol = $event ? 'propietario' : 'cliente'"
@@ -71,8 +71,6 @@
 
       <label>Rol propietario</label>
   </div>
-
-
 
     <button type="submit" class="btn-principal">Crear cuenta</button>
   </form>

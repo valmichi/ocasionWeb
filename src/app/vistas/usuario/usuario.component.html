@@ -1,5 +1,5 @@
 <header class="header">
-  <img src="/logo.jpg" class="logo" alt="Logo" />
+  <img src="/loguito.png" class="logo" alt="Logo" />
   <nav>
     <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
   </nav>
@@ -33,7 +33,7 @@
         No se encontraron salones publicados que coincidan con la búsqueda.
     </div>
     
-        <div class="card" *ngFor="let salon of salonesFiltrados">
+    <div class="card" *ngFor="let salon of salonesFiltrados">
                 <img [src]="salon.imagenes?.[0] || '/default-placeholder.jpg'" alt="Imagen salón" /> 
         <div class="card-info">
             <h3>{{ salon.nombre }}</h3>

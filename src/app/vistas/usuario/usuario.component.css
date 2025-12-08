@@ -9,7 +9,9 @@
 }
 
 .logo {
-  height: 65px;
+  height: 95px;
+  margin-left: -600px;
+  margin-bottom: 10px;
 }
 
 .btn-logout {
@@ -35,6 +37,7 @@
 }
 
 .buscador-contenedor {
+    height: 350px;
     width: 100%;
 
   /* imagen de fondo */
@@ -54,9 +57,9 @@
 
 /* frase */
 .frase-buscador {
-  font-size: 38px;
+  font-size: 45px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 35px;
   color: #000000;
   text-shadow: 1px 1px 2px #ffffff;
 }
@@ -69,7 +72,8 @@
 
 .buscador input {
 padding: 10px;
-width: 300px;
+width: 400px;
+margin-right: -20px;
 border: 2px solid #ccc;
 font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -84,61 +88,93 @@ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: rgb(255, 242, 217);
 }
 
+/* ====== GRID GENERAL ====== */
 .salones-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-gap: 20px;
-padding: 20px 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  padding: 30px 20px;
 }
 
+/* ====== MENSAJES ====== */
+.cargando, .alerta {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  background: rgba(255, 243, 205, 0.8);
+  color: #7c4f00;
+}
 
+/* ====== TARJETA ====== */
 .card {
-background: white;
-border-radius: 12px;
-overflow: hidden;
-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-transition: transform 0.2s ease;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 3px solid rgba(204, 102, 0, 0.15); /* toquecito naranja suave */
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-
+/* Hover estilo fiestecita */
 .card:hover {
-transform: translateY(-5px);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.2);
+  border-color: rgba(255, 140, 0, 0.3);
 }
 
-
+/* ====== IMAGEN ====== */
 .card img {
-width: 100%;
-height: 160px;
-object-fit: cover;
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
 }
 
-
+/* ====== INFO ====== */
 .card-info {
-padding: 15px;
+  padding: 18px 20px;
+  background: #fffdfa; /* tono cálido, beige suave */
 }
-
 
 .card-info h3 {
-margin: 0;
-font-size: 20px;
+  font-size: 1.4rem;
+  margin-bottom: 5px;
+  margin-top: -50px;
+  font-weight: 700;
+  color: #8b2f00; /* rojizo café que combina con navbar */
 }
 
+.card-info p {
+  margin: 4px 0;
+  margin-top: -10px;
+  color: #555;
+  font-size: 1rem;
+}
 
 .capacidad {
-color: #555;
-margin: 5px 0;
+  margin-top: 6px;
+  font-weight: 700;
+  color: #cc5200; /* naranja quemado */
 }
 
-
+/* ====== BOTÓN DETALLES ====== */
 .btn-detalles {
-background: #1b9c07;
-font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-font-size: 17px;
-color: white;
-padding: 10px 12px;
-border: none;
-border-radius: 6px;
-cursor: pointer;
-width: 100%;
-margin-top: 10px;
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  background: #f4a100; /* amarillo cálido */
+  border: none;
+  border-radius: 12px;
+  color: #4a2900;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn-detalles:hover {
+  background: #ffb300;
+  transform: scale(1.03);
 }
